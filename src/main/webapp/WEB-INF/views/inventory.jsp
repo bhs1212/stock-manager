@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,7 +76,9 @@
                                         </form>
                                     </td>
                                     <td>${item.unit}</td>
-                                    <td>${item.expirationDate}</td>
+                                    <td>
+                                        <fmt:formatDate value="${item.expirationDate}" pattern="yyyy년 MM월 dd일" />
+                                    </td>
                                     <td>
                                         <a href="/delete-stock?id=${item.id}" class="btn btn-sm btn-danger" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
                                     </td>
