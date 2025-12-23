@@ -9,10 +9,17 @@ import java.util.List;
 
 @Mapper
 public interface StockMapper {
-    @Select("SELECT id, item_name as itemName, quantity, unit, expiration_date as expirationDate FROM stock")
-    List<StockDTO> findAll();
+    //@Select 쿼리를 <script>를 사용하는 동적 쿼리로 변경 (keyword 처리)
+    @Select("<script>" +
+            "SELECT id, item_name as itemName, quantity, unit, expiration_date as expirationDate FROM stock " +
+            "WHERE 1=1 " +
+            "<if test='keyword != null and keyword != \"\"'>" +
+            "AND item_name LIKE CONCAT('%', #{keyword}, '%') " +
+            "</if>" +
+            "</script>")
+    // 메서드 괄호 안에 String keyword를 반드시 넣어줘야함
+    List<StockDTO> findAll(@org.apache.ibatis.annotations.Param("keyword") String keyword);
 
-    // StockMapper.java 인터페이스 안에 추가
     @Insert("INSERT INTO stock (item_name, quantity, unit, expiration_date) " +
             "VALUES (#{itemName}, #{quantity}, #{unit}, #{expirationDate})")
     void insertStock(StockDTO stock);
@@ -21,5 +28,6 @@ public interface StockMapper {
     void deleteStock(int id);
 
     @org.apache.ibatis.annotations.Update("UPDATE stock SET quantity = #{quantity} WHERE id = #{id}")
-    void updateQuantity(int id, int quantity);
+    void updateQuantity(@org.apache.ibatis.annotations.Param("id") int id, 
+                        @org.apache.ibatis.annotations.Param("quantity") int quantity);
 }

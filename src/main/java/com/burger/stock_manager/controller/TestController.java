@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class TestController {
@@ -28,14 +29,11 @@ public class TestController {
 
     // 2. 새로운 재고 목록 페이지 (http://localhost:8080/inventory)
     @GetMapping("/inventory")
-    public String inventoryPage(Model model) {
-        // DB에서 재고 목록을 싹 가져옵니다.
-        List<StockDTO> stocks = stockMapper.findAll();
-        
-        // 가져온 리스트를 "stocks"라는 이름으로 화면(JSP)에 보냅니다.
+    public String inventoryPage(@RequestParam(value="keyword", required=false) String keyword, Model model) {
+        // 검색어가 있으면 검색된 리스트를, 없으면 전체 리스트를 가져옴
+        List<StockDTO> stocks = stockMapper.findAll(keyword);
         model.addAttribute("stocks", stocks);
-        
-        // WEB-INF/views/inventory.jsp 파일을 찾아가라!
+        model.addAttribute("keyword", keyword); // 검색어를 다시 화면에 보내줌
         return "inventory";
     }
 
