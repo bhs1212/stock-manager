@@ -17,9 +17,18 @@
 </head>
 <body>
 
-        <nav class="navbar navbar-dark shadow-sm mb-4">
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm mb-4">
             <div class="container">
                 <a class="navbar-brand" href="/inventory">🍔 BURGER KING Stock Manager</a>
+        
+                <div class="navbar-nav ms-auto align-items-center">
+                    <c:if test="${not empty sessionScope.user}">
+                        <span class="navbar-text me-3 text-white">
+                            <strong>${sessionScope.user.name}</strong> 님 접속 중
+                        </span>
+                        <a class="btn btn-outline-light btn-sm" href="/logout">로그아웃</a>
+                    </c:if>
+                </div>
             </div>
         </nav>
 

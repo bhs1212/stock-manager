@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.burger.stock_manager.mapper.UserMapper;
+import com.burger.stock_manager.model.UserDTO;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class TestController {
@@ -29,11 +32,20 @@ public class TestController {
 
     // 2. 새로운 재고 목록 페이지 (http://localhost:8080/inventory)
     @GetMapping("/inventory")
-    public String inventoryPage(@RequestParam(value="keyword", required=false) String keyword, Model model) {
-        // 검색어가 있으면 검색된 리스트를, 없으면 전체 리스트를 가져옴
+    public String inventoryPage(@RequestParam(value="keyword", required=false) String keyword, 
+                                HttpSession session, // 1. 세션을 인자로 받습니다.
+                                Model model) {
+    
+        // 2. 세션에 "user" 정보가 있는지 확인합니다.
+        if (session.getAttribute("user") == null) {
+            // 로그인 정보가 없으면 로그인 페이지로 강제로 보냅니다.
+            return "redirect:/login";
+        }
+
+        // 기존 로직 수행
         List<StockDTO> stocks = stockMapper.findAll(keyword);
         model.addAttribute("stocks", stocks);
-        model.addAttribute("keyword", keyword); // 검색어를 다시 화면에 보내줌
+        model.addAttribute("keyword", keyword);
         return "inventory";
     }
 
@@ -55,5 +67,36 @@ public class TestController {
     public String updateStock(int id, int quantity) {
         stockMapper.updateQuantity(id, quantity);
         return "redirect:/inventory";
+    }
+    @Autowired
+    private UserMapper userMapper; // 주입 추가
+
+    // 로그인 페이지 이동
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
+    // 로그인 기능 처리
+    @PostMapping("/login")
+    public String login(String username, String password, HttpSession session, Model model) {
+        UserDTO user = userMapper.login(username, password);
+    
+        if (user != null) {
+            // 로그인 성공: 세션에 사용자 정보 저장 (중요!)
+            session.setAttribute("user", user);
+            return "redirect:/inventory"; // 재고 목록으로 이동
+        } else {
+            // 로그인 실패
+            model.addAttribute("error", "아이디 또는 비밀번호가 틀렸습니다.");
+            return "login";
+        }
+    }
+
+    // 로그아웃
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // 모든 세션 정보 삭제
+        return "redirect:/login";
     }
 }
