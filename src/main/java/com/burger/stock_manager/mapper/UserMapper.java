@@ -7,7 +7,11 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface UserMapper {
-    // 로그인 체크용 쿼리
+    // 기존 login 메서드 (아이디, 비번 둘 다 체크하던 방식 - 나중에 지워도 됨)
     @Select("SELECT * FROM users WHERE username = #{username} AND password = #{password}")
-    UserDTO login(@Param("username") String username, @Param("password") String password);
+    UserDTO login(String username, String password);
+
+    // ★ 새로 추가할 메서드: 아이디로만 유저 정보를 가져옵니다. ★
+    @Select("SELECT * FROM users WHERE username = #{username}")
+    UserDTO findByUsername(String username);
 }
