@@ -14,6 +14,13 @@
         .btn-king:hover { background-color: #e6a900; }
         .low-stock { color: #da291c; font-weight: bold; background-color: #ffeaea; } /* 재고 부족 강조 */
     </style>
+    <style>
+        /* 수량이 0일 때 글자색을 빨간색으로 만들고 굵게 표시 */
+        .out-of-stock {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
@@ -80,7 +87,11 @@
                                     <td>
                                         <form action="/update-stock" method="post" class="d-flex align-items-center">
                                             <input type="hidden" name="id" value="${item.id}">
-                                            <input type="number" name="quantity" value="${item.quantity}" class="form-control form-control-sm me-2" style="width: 70px;">
+        
+                                            <input type="number" name="quantity" value="${item.quantity}" 
+                                                class="form-control form-control-sm me-2 ${item.quantity == 0 ? 'bg-danger-subtle text-danger fw-bold' : ''}" 
+                                                style="width: 70px;">
+        
                                             <button type="submit" class="btn btn-sm btn-outline-secondary">변경</button>
                                         </form>
                                     </td>
