@@ -108,4 +108,31 @@ public class TestController {
         session.invalidate(); // 모든 세션 정보 삭제
         return "redirect:/login";
     }
+
+    // 1. 회원가입 페이지 이동
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
+    }
+
+    // 2. 회원가입 처리
+    @PostMapping("/register")
+    public String register(UserDTO user, Model model) {
+
+        // 1. 아이디 중복 확인
+        int count = userMapper.existsByUsername(user.getUsername());
+        if (count > 0) {
+            // 이미 아이디가 존재한다면 에러 메시지와 함께 다시 가입 페이지로!
+            model.addAttribute("error", "이미 존재하는 아이디입니다.");
+            return "register";
+        }
+
+        // 2. 중복이 아니라면 기존처럼 암호화 및 저장 진행
+        String encodedPassword = encoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        userMapper.insertUser(user);
+
+        return "redirect:/login";
+    }
 }
