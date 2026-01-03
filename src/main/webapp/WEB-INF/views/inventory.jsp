@@ -85,23 +85,39 @@
                                     <td>${item.id}</td>
                                     <td>${item.itemName}</td>
                                     <td>
-                                        <form action="/update-stock" method="post" class="d-flex align-items-center"
-                                            onsubmit="return confirm('수량을 변경하시겠습니까?');">
-                                            <input type="hidden" name="id" value="${item.id}">
-        
-                                            <input type="number" name="quantity" value="${item.quantity}" 
-                                                class="form-control form-control-sm me-2 ${item.quantity == 0 ? 'bg-danger-subtle text-danger fw-bold' : ''}" 
-                                                style="width: 70px;">
-        
-                                            <button type="submit" class="btn btn-sm btn-outline-secondary">변경</button>
-                                        </form>
+                                        <%-- 권한 체크: 세션의 유저 role이 'admin'인 경우만 수정 폼 출력 --%>
+                                        <c:choose>
+                                            <c:when test="${sessionScope.user.role == 'admin'}">
+                                                <form action="/update-stock" method="post" class="d-flex align-items-center" 
+                                                    onsubmit="return confirm('수량을 변경하시겠습니까?');">
+                                                    <input type="hidden" name="id" value="${item.id}">
+                            
+                                                    <input type="number" name="quantity" value="${item.quantity}" min="0"
+                                                        class="form-control form-control-sm me-2 ${item.quantity == 0 ? 'bg-danger-subtle text-danger fw-bold' : ''}" 
+                                                        style="width: 70px;">
+                            
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">변경</button>
+                                                </form>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <%-- 일반 사용자에게는 수량만 텍스트로 표시 --%>
+                                                <span class="${item.quantity == 0 ? 'text-danger fw-bold' : ''}">${item.quantity}</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                     <td>${item.unit}</td>
                                     <td>
                                         <fmt:formatDate value="${item.expirationDate}" pattern="yyyy년 MM월 dd일" />
                                     </td>
                                     <td>
-                                        <a href="/delete-stock?id=${item.id}" class="btn btn-sm btn-danger" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+                                        <%-- 권한 체크: 관리자일 때만 삭제 버튼 노출 --%>
+                                        <c:if test="${sessionScope.user.role == 'admin'}">
+                                            <a href="/delete-stock?id=${item.id}" class="btn btn-sm btn-danger" 
+                                            onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
+                                        </c:if>
+                                        <c:if test="${sessionScope.user.role != 'admin'}">
+                                            <span class="text-muted small">조회 전용</span>
+                                        </c:if>
                                     </td>
                                 </tr>
                             </c:forEach>

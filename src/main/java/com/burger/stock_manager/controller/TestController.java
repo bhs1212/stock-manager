@@ -57,22 +57,40 @@ public class TestController {
     }
 
     @PostMapping("/add-stock")
-    public String addStock(StockDTO stock) {
-        // 1. 화면에서 보낸 데이터를 DB에 저장함
-        stockMapper.insertStock(stock);
+    public String addStock(StockDTO stock, HttpSession session) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
 
-        // 2. 저장이 끝나면 다시 목록 페이지(/inventory)로 강제 이동함
+        // 관리자가 아니면 등록 불가
+        if (user == null || !"admin".equals(user.getRole())) {
+            return "redirect:/inventory";
+        }
+
+        stockMapper.insertStock(stock);
         return "redirect:/inventory";
     }
 
     @GetMapping("/delete-stock")
-    public String deleteStock(int id) {
+    public String deleteStock(int id, HttpSession session) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        // 관리자가 아니면 삭제 불가
+        if (user == null || !"admin".equals(user.getRole())) {
+            return "redirect:/inventory";
+        }
+
         stockMapper.deleteStock(id);
         return "redirect:/inventory";
     }
 
     @PostMapping("/update-stock")
-    public String updateStock(int id, int quantity) {
+    public String updateStock(int id, int quantity, HttpSession session) {
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        // 관리자가 아니면 수정 불가
+        if (user == null || !"admin".equals(user.getRole())) {
+            return "redirect:/inventory";
+        }
+
         stockMapper.updateQuantity(id, quantity);
         return "redirect:/inventory";
     }
@@ -92,6 +110,7 @@ public class TestController {
 
         // encoder.matches를 이용해 입력한 비번과 DB의 암호화된 비번을 비교합니다.
         if (user != null && encoder.matches(password, user.getPassword())) {
+
             // 로그인 성공: 세션에 사용자 정보 저장 (중요!)
             session.setAttribute("user", user);
             return "redirect:/inventory"; // 재고 목록으로 이동
@@ -100,6 +119,7 @@ public class TestController {
             model.addAttribute("error", "아이디 또는 비밀번호가 틀렸습니다.");
             return "login";
         }
+
     }
 
     // 로그아웃

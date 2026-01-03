@@ -18,7 +18,7 @@ public interface UserMapper {
     UserDTO findByUsername(String username);
 
     // 회원가입: 사용자 정보를 DB에 저장
-    @Insert("INSERT INTO users (username, password, role) VALUES (#{username}, #{password}, 'USER')")
+    @Insert("INSERT INTO users (username, password, role) VALUES (#{username}, #{password}, #{role})")
     int insertUser(UserDTO user);
 
     // 아이디 중복 체크: 해당 아이디를 가진 사용자가 몇 명인지 반환 (0이면 중복 아님)
