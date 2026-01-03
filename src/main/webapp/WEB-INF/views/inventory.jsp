@@ -85,7 +85,8 @@
                                     <td>${item.id}</td>
                                     <td>${item.itemName}</td>
                                     <td>
-                                        <form action="/update-stock" method="post" class="d-flex align-items-center">
+                                        <form action="/update-stock" method="post" class="d-flex align-items-center"
+                                            onsubmit="return confirm('수량을 변경하시겠습니까?');">
                                             <input type="hidden" name="id" value="${item.id}">
         
                                             <input type="number" name="quantity" value="${item.quantity}" 
