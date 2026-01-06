@@ -36,6 +36,9 @@
             </c:if>
             
             <button type="submit" class="btn btn-king w-100 py-2 mt-2">로그인</button>
+            <div style="margin-top: 15px;" class = "text-center"> 
+                    <a href="/register" class="btn btn-outline-secondary">회원가입</a>
+            </div>
         </form>
     </div>
 </body>
