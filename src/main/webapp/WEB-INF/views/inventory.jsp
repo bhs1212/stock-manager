@@ -56,7 +56,14 @@
                             <input type="number" name="quantity" class="form-control" placeholder="수량" required>
                         </div>
                         <div class="col-md-2">
-                            <input type="text" name="unit" class="form-control" placeholder="단위(EA/KG)" required>
+                            <select name="unit" class="form-select" required>
+                                <option value="" disabled selected>단위를 선택하세요</option>
+                                <option value="KG">KG (킬로그램)</option>
+                                <option value="EA">EA (개수)</option>
+                                <option value="PACK">PACK (팩)</option>
+                                <option value="BOX">BOX (박스)</option>
+                                <option value="L">L (리터)</option>
+                            </select>
                         </div>
                         <div class="col-md-3">
                             <input type="date" name="expirationDate" class="form-control" required>
@@ -80,7 +87,7 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th><th>자재명</th><th>수량(변경)</th><th>단위</th><th>유통기한</th><th>관리</th>
+                                <th>자재명</th><th>수량(변경)</th><th>단위</th><th>유통기한</th><th>관리</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,7 +98,6 @@
     
                                     <%-- 조건에 따라 tr의 클래스(색상)를 결정 --%>
                                     <tr class="${days < 0 ? 'expire-danger' : (days <= 3 ? 'expire-warning' : '')}">
-                                        <td>${item.id}</td>
                                         <td>
                                             <strong>${item.itemName}</strong>
                                             <%-- 3. 이름 옆에 배지(Badge) 달아주기 --%>
@@ -143,6 +149,28 @@
                             </c:forEach>
                         </tbody>
                     </table>
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav>
+                            <ul class="pagination">
+                                <%-- 이전 버튼 --%>
+                                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="?page=${currentPage - 1}&keyword=${keyword}">이전</a>
+                                </li>
+
+                                <%-- 페이지 번호 --%>
+                                <c:forEach var="i" begin="1" end="${totalPages}">
+                                    <li class="page-item ${currentPage == i ? 'active' : ''}">
+                                        <a class="page-link" href="?page=${i}&keyword=${keyword}">${i}</a>
+                                    </li>
+                                </c:forEach>
+
+                                <%-- 다음 버튼 --%>
+                                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                    <a class="page-link" href="?page=${currentPage + 1}&keyword=${keyword}">다음</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>

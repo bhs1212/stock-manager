@@ -37,22 +37,36 @@ public class TestController {
         return "hello";
     }
 
-    // 2. 새로운 재고 목록 페이지 (http://localhost:8080/inventory)
+    // 새로운 재고 목록 페이지 (http://localhost:8080/inventory)
     @GetMapping("/inventory")
-    public String inventoryPage(@RequestParam(value = "keyword", required = false) String keyword,
-            HttpSession session, // 1. 세션을 인자로 받습니다.
+    public String inventoryPage(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "page", defaultValue = "1") int page, // 페이지 번호 추가 (기본값 1)
+            HttpSession session,
             Model model) {
 
-        // 2. 세션에 "user" 정보가 있는지 확인합니다.
+        // 1. 로그인 체크 (기존과 동일)
         if (session.getAttribute("user") == null) {
-            // 로그인 정보가 없으면 로그인 페이지로 강제로 보냅니다.
             return "redirect:/login";
         }
 
-        // 기존 로직 수행
-        List<StockDTO> stocks = stockMapper.findAll(keyword);
+        // 2. 페이징 설정
+        int size = 10; // 한 페이지에 보여줄 개수
+        int offset = (page - 1) * size; // 시작 지점 계산 (1페이지면 0부터, 2페이지면 10부터)
+
+        // 3. 데이터 가져오기 (수정한 Mapper 메서드 호출)
+        List<StockDTO> stocks = stockMapper.findAll(keyword, offset, size);
+
+        // 4. 전체 페이지 수 계산
+        int totalCount = stockMapper.countTotal(keyword); // 전체 게시글 수
+        int totalPages = (int) Math.ceil((double) totalCount / size); // 총 페이지 수 계산
+
+        // 5. 화면(JSP)으로 전달
         model.addAttribute("stocks", stocks);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+
         return "inventory";
     }
 
