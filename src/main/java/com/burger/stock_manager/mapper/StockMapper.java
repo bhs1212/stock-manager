@@ -18,7 +18,7 @@ public interface StockMapper {
                         "<if test='keyword != null and keyword != \"\"'>" +
                         "  AND item_name LIKE CONCAT('%', #{keyword}, '%') " +
                         "</if>" +
-                        "ORDER BY expirationDate ASC " + // 유통기한 임박순 정렬 추가
+                        "ORDER BY itemName ASC " +
                         "LIMIT #{offset}, #{size}" + // 페이징 처리
                         "</script>")
         List<StockDTO> findAll(@Param("keyword") String keyword,
