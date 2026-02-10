@@ -44,6 +44,11 @@
         </nav>
 
         <div class="container">
+        
+            <button type="button" class="btn btn-king mb-4" data-bs-toggle="modal" data-bs-target="#salesModal">
+                🍔 메뉴 판매 처리
+            </button>
+
             <div class="card shadow-sm mb-4">
                 <div class="card-header btn-king">신규 자재 등록</div>
                 
@@ -174,6 +179,57 @@
                 </div>
             </div>
         </div>
+    </div> 
+    <div class="modal fade" id="salesModal" tabindex="-1" aria-labelledby="salesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #da291c; color: white;">
+                    <h5 class="modal-title" id="salesModalLabel">🍔 메뉴 판매 (재고 자동 차감)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/sell-menu" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">메뉴 선택</label>
+                            <select name="menuName" class="form-select" required>
+                                <option value="" disabled selected>판매할 메뉴를 선택하세요</option>
+                                <option value="불고기버거">불고기버거</option>
+                                <option value="치즈버거">치즈버거</option>
+                                <option value="와퍼">와퍼</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">판매 수량</label>
+                            <div class="input-group">
+                                <input type="number" name="sellCount" class="form-control" min="1" value="1" required>
+                                <span class="input-group-text">개</span>
+                            </div>
+                        </div>
+                        <div class="alert alert-info small">
+                            * 판매 시 레시피에 등록된 재료 재고가 자동으로 차감됩니다.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-king">판매 확정</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        <%-- 컨트롤러에서 보낸 성공 메시지가 있으면 alert로 띄움 --%>
+        <c:if test="${not empty message}">
+            alert("${message}");
+        </c:if>
+        <%-- 에러 메시지가 있으면 alert로 띄움 --%>
+        <c:if test="${not empty error}">
+            alert("${error}");
+        </c:if>
+    </script>
 
 </body>
 </html>

@@ -74,12 +74,23 @@ public class TestController {
     public String addStock(StockDTO stock, HttpSession session) {
         UserDTO user = (UserDTO) session.getAttribute("user");
 
-        // 관리자가 아니면 등록 불가
+        // 권한 체크
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/inventory";
         }
 
-        stockMapper.insertStock(stock);
+        // [핵심 로직 추가] 같은 이름의 재료가 있는지 확인 (삭제된 것 포함)
+        StockDTO existingStock = stockMapper.findByNameIncludeDeleted(stock.getItemName());
+
+        if (existingStock != null) {
+            // 이미 있다면 기존 ID를 찾아서 다시 살리기
+            stock.setId(existingStock.getId()); // 기존 ID(예: 1번)를 세팅
+            stockMapper.restoreStock(stock); // is_deleted=0으로 변경 및 수량 업데이트
+        } else {
+            // 정말 처음 등록하는 재료라면 신규 등록
+            stockMapper.insertStock(stock);
+        }
+
         return "redirect:/inventory";
     }
 

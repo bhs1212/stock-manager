@@ -1,11 +1,14 @@
 package com.burger.stock_manager.mapper;
 
 import com.burger.stock_manager.model.StockDTO;
+import com.burger.stock_manager.model.RecipeDTO;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
 import java.util.List;
 
 @Mapper
@@ -14,7 +17,7 @@ public interface StockMapper {
         @Select("<script>" +
                         "SELECT id, item_name as itemName, quantity, unit, expiration_date as expirationDate FROM stock "
                         +
-                        "WHERE 1=1 " +
+                        "WHERE is_deleted = 0 " + // 삭제되지 않은 재료만
                         "<if test='keyword != null and keyword != \"\"'>" +
                         "  AND item_name LIKE CONCAT('%', #{keyword}, '%') " +
                         "</if>" +
@@ -28,7 +31,7 @@ public interface StockMapper {
         // 전체 페이지 번호를 계산하기 위해 '총 개수'를 가져오는 쿼리 추가
         @Select("<script>" +
                         "SELECT COUNT(*) FROM stock " +
-                        "WHERE 1=1 " +
+                        "WHERE is_deleted = 0 " +
                         "<if test='keyword != null and keyword != \"\"'>" +
                         "  AND item_name LIKE CONCAT('%', #{keyword}, '%') " +
                         "</if>" +
@@ -39,10 +42,28 @@ public interface StockMapper {
                         "VALUES (#{itemName}, #{quantity}, #{unit}, #{expirationDate})")
         void insertStock(StockDTO stock);
 
-        @org.apache.ibatis.annotations.Delete("DELETE FROM stock WHERE id = #{id}")
+        // 3. 삭제: DELETE 대신 UPDATE 사용 (논리 삭제)
+        @Update("UPDATE stock SET is_deleted = 1 WHERE id = #{id}")
         void deleteStock(int id);
 
-        @org.apache.ibatis.annotations.Update("UPDATE stock SET quantity = #{quantity} WHERE id = #{id}")
-        void updateQuantity(@org.apache.ibatis.annotations.Param("id") int id,
-                        @org.apache.ibatis.annotations.Param("quantity") int quantity);
+        @Update("UPDATE stock SET quantity = #{quantity} WHERE id = #{id}")
+        void updateQuantity(@Param("id") int id, @Param("quantity") int quantity);
+
+        // --- 레시피 관련 추가 ---
+
+        @Select("SELECT stock_id as stockId, required_quantity as requiredQuantity " +
+                        "FROM recipe WHERE menu_name = #{menuName}")
+        List<RecipeDTO> getRecipeByMenu(String menuName);
+
+        @Update("UPDATE stock SET quantity = quantity - #{usedAmount} WHERE id = #{stockId}")
+        void decreaseStock(@Param("stockId") int stockId, @Param("usedAmount") int usedAmount);
+
+        // 이름으로 기존 데이터가 있는지 확인 (is_deleted 상관없이 이름만 같으면 가져옴)
+        @Select("SELECT id, item_name as itemName FROM stock WHERE item_name = #{itemName} LIMIT 1")
+        StockDTO findByNameIncludeDeleted(String itemName);
+
+        // 기존 ID의 데이터를 다시 활성화 (is_deleted를 0으로)
+        @Update("UPDATE stock SET quantity = #{quantity}, unit = #{unit}, " +
+                        "expiration_date = #{expirationDate}, is_deleted = 0 WHERE id = #{id}")
+        void restoreStock(StockDTO stock);
 }
