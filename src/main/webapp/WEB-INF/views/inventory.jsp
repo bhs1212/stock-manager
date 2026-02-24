@@ -44,10 +44,14 @@
         </nav>
 
         <div class="container">
-        
-            <button type="button" class="btn btn-king mb-4" data-bs-toggle="modal" data-bs-target="#salesModal">
-                🍔 메뉴 판매 처리
-            </button>
+            <div class="mb-4">
+                <button type="button" class="btn btn-king" data-bs-toggle="modal" data-bs-target="#salesModal">
+                    🍔 메뉴 판매 처리
+                </button>
+                <a href="/sales-dashboard" class="btn btn-king">
+                    📊 판매 내역 보기
+                </a>
+            </div>
 
             <div class="card shadow-sm mb-4">
                 <div class="card-header btn-king">신규 자재 등록</div>

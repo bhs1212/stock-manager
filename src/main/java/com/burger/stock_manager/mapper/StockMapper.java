@@ -2,6 +2,7 @@ package com.burger.stock_manager.mapper;
 
 import com.burger.stock_manager.model.StockDTO;
 import com.burger.stock_manager.model.RecipeDTO;
+import com.burger.stock_manager.model.SalesLogDTO;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -28,7 +29,7 @@ public interface StockMapper {
                         @Param("offset") int offset,
                         @Param("size") int size);
 
-        // 전체 페이지 번호를 계산하기 위해 '총 개수'를 가져오는 쿼리 추가
+        // 전체 페이지 번호를 계산하기 위해 총 개수를 가져오는 쿼리 추가
         @Select("<script>" +
                         "SELECT COUNT(*) FROM stock " +
                         "WHERE is_deleted = 0 " +
@@ -42,7 +43,7 @@ public interface StockMapper {
                         "VALUES (#{itemName}, #{quantity}, #{unit}, #{expirationDate})")
         void insertStock(StockDTO stock);
 
-        // 3. 삭제: DELETE 대신 UPDATE 사용 (논리 삭제)
+        // 삭제: DELETE 대신 UPDATE 사용 (논리 삭제)
         @Update("UPDATE stock SET is_deleted = 1 WHERE id = #{id}")
         void deleteStock(int id);
 
@@ -66,4 +67,13 @@ public interface StockMapper {
         @Update("UPDATE stock SET quantity = #{quantity}, unit = #{unit}, " +
                         "expiration_date = #{expirationDate}, is_deleted = 0 WHERE id = #{id}")
         void restoreStock(StockDTO stock);
+
+        // 판매 내역 저장
+        @Insert("INSERT INTO sales_log (menu_name, sell_count) VALUES (#{menuName}, #{sellCount})")
+        void insertSalesLog(@Param("menuName") String menuName, @Param("sellCount") int sellCount);
+
+        // 전체 판매 내역 조회 (최신순)
+        @Select("SELECT id, menu_name as menuName, sell_count as sellCount, sale_date as saleDate " +
+                        "FROM sales_log ORDER BY sale_date DESC LIMIT 50")
+        List<SalesLogDTO> findAllSalesLogs();
 }

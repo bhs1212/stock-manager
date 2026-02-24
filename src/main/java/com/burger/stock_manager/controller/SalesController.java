@@ -1,9 +1,12 @@
 package com.burger.stock_manager.controller;
 
 import com.burger.stock_manager.mapper.StockMapper;
-import com.burger.stock_manager.model.RecipeDTO;
+import com.burger.stock_manager.model.SalesLogDTO;
+import com.burger.stock_manager.service.SalesService; // 서비스 임포트
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -14,37 +17,33 @@ import java.util.List;
 public class SalesController {
 
     @Autowired
-    private StockMapper stockMapper;
+    private StockMapper stockMapper; // 대시보드 조회용으로 남겨둡니다.
 
-    /**
-     * 메뉴 판매 처리 (레시피 기반 재고 역산)
-     */
+    @Autowired
+    private SalesService salesService; // 서비스 계층 주입
+
     @PostMapping("/sell-menu")
     public String sellMenu(@RequestParam String menuName,
             @RequestParam int sellCount,
             RedirectAttributes rttr) {
 
-        // 1. 해당 메뉴에 필요한 레시피 정보(재료 ID, 소모량)를 DB에서 가져옴
-        List<RecipeDTO> recipes = stockMapper.getRecipeByMenu(menuName);
+        try {
+            // 복잡한 로직은 모두 서비스에게 맡깁니다.
+            salesService.processSale(menuName, sellCount);
+            rttr.addFlashAttribute("message", menuName + " " + sellCount + "개 판매 및 기록 완료");
 
-        // 2. 만약 등록된 레시피가 없다면 안내 메시지 후 리턴
-        if (recipes == null || recipes.isEmpty()) {
-            rttr.addFlashAttribute("error", menuName + "의 레시피 정보가 등록되지 않았습니다.");
-            return "redirect:/inventory";
+        } catch (Exception e) {
+            // 서비스에서 에러가 발생하면(예: 레시피 없음), 그 메시지를 받아서 화면에 전달합니다.
+            rttr.addFlashAttribute("error", e.getMessage());
         }
-
-        // 3. 레시피를 돌면서 각 재료의 재고를 차감
-        for (RecipeDTO recipe : recipes) {
-            // 소모 총량 = 메뉴 1개당 소모량 * 판매 개수
-            int totalUsed = recipe.getRequiredQuantity() * sellCount;
-
-            // StockMapper를 통해 DB의 quantity 업데이트
-            stockMapper.decreaseStock(recipe.getStockId(), totalUsed);
-        }
-
-        // 4. 완료 메시지 전달 (일회성 데이터)
-        rttr.addFlashAttribute("message", menuName + " " + sellCount + "개 판매가 완료되어 재고가 차감되었습니다.");
 
         return "redirect:/inventory";
+    }
+
+    @GetMapping("/sales-dashboard")
+    public String salesDashboard(Model model) {
+        List<SalesLogDTO> salesLogs = stockMapper.findAllSalesLogs();
+        model.addAttribute("salesLogs", salesLogs);
+        return "sales-dashboard";
     }
 }
