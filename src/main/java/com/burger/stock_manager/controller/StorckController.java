@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Controller
-public class TestController {
+public class StorckController {
 
     // 1. Mapper 연결 (자동 주입)
     @Autowired
@@ -45,23 +45,18 @@ public class TestController {
             HttpSession session,
             Model model) {
 
-        // 1. 로그인 체크 (기존과 동일)
-        if (session.getAttribute("user") == null) {
-            return "redirect:/login";
-        }
-
-        // 2. 페이징 설정
+        // 페이징 설정
         int size = 10; // 한 페이지에 보여줄 개수
         int offset = (page - 1) * size; // 시작 지점 계산 (1페이지면 0부터, 2페이지면 10부터)
 
-        // 3. 데이터 가져오기 (수정한 Mapper 메서드 호출)
+        // 데이터 가져오기 (수정한 Mapper 메서드 호출)
         List<StockDTO> stocks = stockMapper.findAll(keyword, offset, size);
 
-        // 4. 전체 페이지 수 계산
+        // 전체 페이지 수 계산
         int totalCount = stockMapper.countTotal(keyword); // 전체 게시글 수
         int totalPages = (int) Math.ceil((double) totalCount / size); // 총 페이지 수 계산
 
-        // 5. 화면(JSP)으로 전달
+        // 화면(JSP)으로 전달
         model.addAttribute("stocks", stocks);
         model.addAttribute("keyword", keyword);
         model.addAttribute("currentPage", page);
@@ -73,11 +68,6 @@ public class TestController {
     @PostMapping("/add-stock")
     public String addStock(StockDTO stock, HttpSession session) {
         UserDTO user = (UserDTO) session.getAttribute("user");
-
-        // 권한 체크
-        if (user == null || !"admin".equals(user.getRole())) {
-            return "redirect:/inventory";
-        }
 
         // [핵심 로직 추가] 같은 이름의 재료가 있는지 확인 (삭제된 것 포함)
         StockDTO existingStock = stockMapper.findByNameIncludeDeleted(stock.getItemName());
@@ -98,11 +88,6 @@ public class TestController {
     public String deleteStock(int id, HttpSession session) {
         UserDTO user = (UserDTO) session.getAttribute("user");
 
-        // 관리자가 아니면 삭제 불가
-        if (user == null || !"admin".equals(user.getRole())) {
-            return "redirect:/inventory";
-        }
-
         stockMapper.deleteStock(id);
         return "redirect:/inventory";
     }
@@ -110,11 +95,6 @@ public class TestController {
     @PostMapping("/update-stock")
     public String updateStock(int id, int quantity, HttpSession session) {
         UserDTO user = (UserDTO) session.getAttribute("user");
-
-        // 관리자가 아니면 수정 불가
-        if (user == null || !"admin".equals(user.getRole())) {
-            return "redirect:/inventory";
-        }
 
         stockMapper.updateQuantity(id, quantity);
         return "redirect:/inventory";
