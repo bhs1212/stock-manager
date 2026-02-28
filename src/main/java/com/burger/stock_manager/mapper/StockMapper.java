@@ -74,4 +74,7 @@ public interface StockMapper {
         @Select("SELECT id, menu_name as menuName, sell_count as sellCount, sale_date as saleDate " +
                         "FROM sales_log ORDER BY sale_date DESC LIMIT 50")
         List<SalesLogDTO> findAllSalesLogs();
+
+        @Select("SELECT id, item_name as itemName, quantity FROM stock WHERE id = #{id}")
+        StockDTO findStockById(int id);
 }

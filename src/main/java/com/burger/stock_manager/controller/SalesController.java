@@ -23,14 +23,8 @@ public class SalesController {
             @RequestParam int sellCount,
             RedirectAttributes rttr) {
 
-        try {
-            salesService.processSale(menuName, sellCount);
-            rttr.addFlashAttribute("message", menuName + " " + sellCount + "개 판매 및 기록 완료");
-
-        } catch (Exception e) {
-            // 서비스에서 에러가 발생하면(예: 레시피 없음) 메시지를 받아서 화면에 전달
-            rttr.addFlashAttribute("error", e.getMessage());
-        }
+        salesService.processSale(menuName, sellCount);
+        rttr.addFlashAttribute("message", menuName + " " + sellCount + "개 판매 및 기록 완료");
 
         return "redirect:/inventory";
     }

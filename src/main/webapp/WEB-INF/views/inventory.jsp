@@ -142,13 +142,13 @@
                                     </td>
                                     <td>${item.quantity} ${item.unit}</td>
                                     <td>
-                                        <fmt:formatDate value="${item.expirationDate}" pattern="yyyy년 MM월 dd일" />
+                                        ${item.expirationDate}
                                     </td>
                                     <td>
                                         <%-- 권한 체크: 관리자일 때만 삭제 버튼 노출 --%>
                                         <c:if test="${sessionScope.user.role == 'admin'}">
                                             <form action="/delete-stock" method="post" style="display:inline;">
-                                                <input type="hidden" name="id" value="${stock.id}">
+                                                <input type="hidden" name="id" value="${item.id}">
                                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
                                             </form>
                                         </c:if>

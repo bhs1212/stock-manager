@@ -1,8 +1,12 @@
 package com.burger.stock_manager.service;
 
+import com.burger.stock_manager.exception.InsufficientStockException;
+import com.burger.stock_manager.exception.RecipeNotFoundException;
 import com.burger.stock_manager.mapper.StockMapper;
 import com.burger.stock_manager.model.RecipeDTO;
 import com.burger.stock_manager.model.SalesLogDTO;
+import com.burger.stock_manager.model.StockDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +20,25 @@ public class SalesService {
     private StockMapper stockMapper;
 
     @Transactional
-    public void processSale(String menuName, int sellCount) throws Exception {
+    public void processSale(String menuName, int sellCount) {
 
         List<RecipeDTO> recipes = stockMapper.getRecipeByMenu(menuName);
 
         if (recipes == null || recipes.isEmpty()) {
-            throw new Exception(menuName + "의 레시피 정보가 등록되지 않았습니다.");
+            throw new RecipeNotFoundException(menuName);
         }
 
+        // 차감 전 재고 충분한지 먼저 확인
+        for (RecipeDTO recipe : recipes) {
+            int totalUsed = recipe.getRequiredQuantity() * sellCount;
+            StockDTO stock = stockMapper.findStockById(recipe.getStockId());
+
+            if (stock == null || stock.getQuantity() < totalUsed) {
+                throw new InsufficientStockException(stock != null ? stock.getItemName() : "알 수 없는 재료");
+            }
+        }
+
+        // 검증 통과 후 차감
         for (RecipeDTO recipe : recipes) {
             int totalUsed = recipe.getRequiredQuantity() * sellCount;
             stockMapper.decreaseStock(recipe.getStockId(), totalUsed);
