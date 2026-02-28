@@ -18,12 +18,12 @@ public interface StockMapper {
         @Select("<script>" +
                         "SELECT id, item_name as itemName, quantity, unit, expiration_date as expirationDate FROM stock "
                         +
-                        "WHERE is_deleted = 0 " + // 삭제되지 않은 재료만
+                        "WHERE is_deleted = 0 " +
                         "<if test='keyword != null and keyword != \"\"'>" +
                         "  AND item_name LIKE CONCAT('%', #{keyword}, '%') " +
                         "</if>" +
                         "ORDER BY itemName ASC " +
-                        "LIMIT #{offset}, #{size}" + // 페이징 처리
+                        "LIMIT #{offset}, #{size}" +
                         "</script>")
         List<StockDTO> findAll(@Param("keyword") String keyword,
                         @Param("offset") int offset,
@@ -49,8 +49,6 @@ public interface StockMapper {
 
         @Update("UPDATE stock SET quantity = #{quantity} WHERE id = #{id}")
         void updateQuantity(@Param("id") int id, @Param("quantity") int quantity);
-
-        // --- 레시피 관련 추가 ---
 
         @Select("SELECT stock_id as stockId, required_quantity as requiredQuantity " +
                         "FROM recipe WHERE menu_name = #{menuName}")

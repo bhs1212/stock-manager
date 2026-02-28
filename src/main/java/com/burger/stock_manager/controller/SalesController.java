@@ -1,6 +1,5 @@
 package com.burger.stock_manager.controller;
 
-import com.burger.stock_manager.mapper.StockMapper;
 import com.burger.stock_manager.model.SalesLogDTO;
 import com.burger.stock_manager.service.SalesService; // 서비스 임포트
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,7 @@ import java.util.List;
 public class SalesController {
 
     @Autowired
-    private StockMapper stockMapper; // 대시보드 조회용으로 남겨둡니다.
-
-    @Autowired
-    private SalesService salesService; // 서비스 계층 주입
+    private SalesService salesService;
 
     @PostMapping("/sell-menu")
     public String sellMenu(@RequestParam String menuName,
@@ -28,12 +24,11 @@ public class SalesController {
             RedirectAttributes rttr) {
 
         try {
-            // 복잡한 로직은 모두 서비스에게 맡깁니다.
             salesService.processSale(menuName, sellCount);
             rttr.addFlashAttribute("message", menuName + " " + sellCount + "개 판매 및 기록 완료");
 
         } catch (Exception e) {
-            // 서비스에서 에러가 발생하면(예: 레시피 없음), 그 메시지를 받아서 화면에 전달합니다.
+            // 서비스에서 에러가 발생하면(예: 레시피 없음) 메시지를 받아서 화면에 전달
             rttr.addFlashAttribute("error", e.getMessage());
         }
 
@@ -42,7 +37,8 @@ public class SalesController {
 
     @GetMapping("/sales-dashboard")
     public String salesDashboard(Model model) {
-        List<SalesLogDTO> salesLogs = stockMapper.findAllSalesLogs();
+        List<SalesLogDTO> salesLogs = salesService.getSalesLogs();
+
         model.addAttribute("salesLogs", salesLogs);
         return "sales-dashboard";
     }

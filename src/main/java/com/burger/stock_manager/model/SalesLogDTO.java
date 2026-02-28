@@ -11,5 +11,4 @@ public class SalesLogDTO {
     private int sellCount;
     private Timestamp saleDate;
 
-    // Getter, Setter 생략 (직접 생성하시거나 @Data 사용)
 }

@@ -147,8 +147,10 @@
                                     <td>
                                         <%-- 권한 체크: 관리자일 때만 삭제 버튼 노출 --%>
                                         <c:if test="${sessionScope.user.role == 'admin'}">
-                                            <a href="/delete-stock?id=${item.id}" class="btn btn-sm btn-danger" 
-                                            onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
+                                            <form action="/delete-stock" method="post" style="display:inline;">
+                                                <input type="hidden" name="id" value="${stock.id}">
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                                            </form>
                                         </c:if>
                                         <c:if test="${sessionScope.user.role != 'admin'}">
                                             <span class="text-muted small">조회 전용</span>
