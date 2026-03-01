@@ -1,6 +1,5 @@
 package com.burger.stock_manager.controller;
 
-import com.burger.stock_manager.model.SalesLogDTO;
 import com.burger.stock_manager.service.SalesService; // 서비스 임포트
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Controller
 public class SalesController {
@@ -30,10 +29,26 @@ public class SalesController {
     }
 
     @GetMapping("/sales-dashboard")
-    public String salesDashboard(Model model) {
-        List<SalesLogDTO> salesLogs = salesService.getSalesLogs();
+    public String salesDashboard(
+            @RequestParam(value = "year", required = false) Integer year,
+            @RequestParam(value = "month", required = false) Integer month,
+            Model model) {
 
-        model.addAttribute("salesLogs", salesLogs);
+        // 기본값: 현재 연월
+        LocalDate now = LocalDate.now();
+        if (year == null)
+            year = now.getYear();
+        if (month == null)
+            month = now.getMonthValue();
+
+        model.addAttribute("salesLogs", salesService.getSalesLogs());
+        model.addAttribute("dailyStats", salesService.getDailyStats());
+        model.addAttribute("weeklyStats", salesService.getWeeklyStats());
+        model.addAttribute("monthlyStats", salesService.getMonthlyStats());
+        model.addAttribute("customStats", salesService.getStatsByMonth(year, month));
+        model.addAttribute("selectedYear", year);
+        model.addAttribute("selectedMonth", month);
+
         return "sales-dashboard";
     }
 }

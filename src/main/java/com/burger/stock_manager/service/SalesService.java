@@ -2,9 +2,11 @@ package com.burger.stock_manager.service;
 
 import com.burger.stock_manager.exception.InsufficientStockException;
 import com.burger.stock_manager.exception.RecipeNotFoundException;
+import com.burger.stock_manager.mapper.SalesMapper;
 import com.burger.stock_manager.mapper.StockMapper;
 import com.burger.stock_manager.model.RecipeDTO;
 import com.burger.stock_manager.model.SalesLogDTO;
+import com.burger.stock_manager.model.SalesStatDTO;
 import com.burger.stock_manager.model.StockDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +53,24 @@ public class SalesService {
     public List<SalesLogDTO> getSalesLogs() {
 
         return stockMapper.findAllSalesLogs();
+    }
+
+    @Autowired
+    private SalesMapper salesMapper;
+
+    public List<SalesStatDTO> getDailyStats() {
+        return salesMapper.getDailyStats();
+    }
+
+    public List<SalesStatDTO> getWeeklyStats() {
+        return salesMapper.getWeeklyStats();
+    }
+
+    public List<SalesStatDTO> getMonthlyStats() {
+        return salesMapper.getMonthlyStats();
+    }
+
+    public List<SalesStatDTO> getStatsByMonth(int year, int month) {
+        return salesMapper.getStatsByMonth(year, month);
     }
 }
