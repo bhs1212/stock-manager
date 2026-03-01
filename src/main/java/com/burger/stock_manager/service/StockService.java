@@ -40,9 +40,14 @@ public class StockService {
     // 재고 추가
     @Transactional
     public void addStock(StockDTO stock) {
-        // 같은 이름의 재료가 있는지 확인
-        StockDTO existingStock = stockMapper.findByNameIncludeDeleted(stock.getItemName());
+        if (stock.getItemName() == null || stock.getItemName().isBlank()) {
+            throw new IllegalArgumentException("자재명은 필수입니다.");
+        }
+        if (stock.getQuantity() < 0) { // null 체크 제거, int는 null이 없음
+            throw new IllegalArgumentException("수량은 0 이상이어야 합니다.");
+        }
 
+        StockDTO existingStock = stockMapper.findByNameIncludeDeleted(stock.getItemName());
         if (existingStock != null) {
             stock.setId(existingStock.getId());
             stockMapper.restoreStock(stock);
