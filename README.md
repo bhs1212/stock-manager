@@ -8,13 +8,13 @@
 
 ## 🛠 기술 스택
 
-| 구분 | 기술 |
-|------|------|
-| Backend | Java 17, Spring Boot 3.5, Spring Security |
-| DB | MySQL 8.0, MyBatis |
-| Frontend | JSP, Bootstrap 5, JSTL |
-| Build | Maven |
-| etc | Lombok, BCrypt |
+| 구분     | 기술                                      |
+| -------- | ----------------------------------------- |
+| Backend  | Java 17, Spring Boot 3.5, Spring Security |
+| DB       | MySQL 8.0, MyBatis                        |
+| Frontend | Thymeleaf, Bootstrap 5                    |
+| Build    | Maven                                     |
+| etc      | Lombok, BCrypt                            |
 
 ## 📁 프로젝트 구조
 
@@ -81,11 +81,13 @@ src/main/java/com/burger/stock_manager/
 ## ✨ 주요 기능
 
 ### 인증/권한
+
 - Spring Security 기반 로그인/로그아웃
 - BCrypt 비밀번호 암호화
 - ADMIN/USER 역할 분리 (ADMIN만 재고 등록/수정/삭제 가능)
 
 ### 재고 관리
+
 - 자재 등록, 수정, 삭제 (논리 삭제)
 - 삭제된 자재 재등록 시 자동 복원
 - 유통기한 임박/만료 시각적 경고 (배지 + 행 색상)
@@ -93,11 +95,13 @@ src/main/java/com/burger/stock_manager/
 - 자재명 검색 및 페이지네이션
 
 ### 판매 처리
+
 - 메뉴 선택 시 레시피 기반 재고 자동 차감
 - 차감 전 재고 충분 여부 검증
 - 판매 로그 자동 저장
 
 ### 판매 대시보드
+
 - 일별/주별/월별 판매 통계
 - 연월 선택 커스텀 조회
 - 최근 판매 내역 목록
@@ -105,6 +109,7 @@ src/main/java/com/burger/stock_manager/
 ## 🚀 실행 방법
 
 ### 1. 사전 요구사항
+
 - Java 17
 - MySQL 8.0
 - Maven
@@ -176,6 +181,7 @@ spring.datasource.password=your_password
 ```
 
 ### 테스트 항목 (SalesServiceTest)
+
 - 정상 판매 시 재고 차감 및 판매 로그 저장 검증
 - 레시피 미등록 메뉴 판매 시 RecipeNotFoundException 발생
 - 재고 부족 시 InsufficientStockException 발생 및 차감 미실행
