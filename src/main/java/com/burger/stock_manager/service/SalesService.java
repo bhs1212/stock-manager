@@ -46,13 +46,13 @@ public class SalesService {
             stockMapper.decreaseStock(recipe.getStockId(), totalUsed);
         }
 
-        stockMapper.insertSalesLog(menuName, sellCount);
+        salesMapper.insertSalesLog(menuName, sellCount);
     }
 
     // 대시보드용 판매 로그 조회
     public List<SalesLogDTO> getSalesLogs() {
 
-        return stockMapper.findAllSalesLogs();
+        return salesMapper.findAllSalesLogs();
     }
 
     @Autowired

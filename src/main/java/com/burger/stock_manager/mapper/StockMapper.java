@@ -66,15 +66,6 @@ public interface StockMapper {
                         "expiration_date = #{expirationDate}, is_deleted = 0 WHERE id = #{id}")
         void restoreStock(StockDTO stock);
 
-        // 판매 내역 저장
-        @Insert("INSERT INTO sales_log (menu_name, sell_count) VALUES (#{menuName}, #{sellCount})")
-        void insertSalesLog(@Param("menuName") String menuName, @Param("sellCount") int sellCount);
-
-        // 전체 판매 내역 조회 (최신순)
-        @Select("SELECT id, menu_name as menuName, sell_count as sellCount, sale_date as saleDate " +
-                        "FROM sales_log ORDER BY sale_date DESC LIMIT 50")
-        List<SalesLogDTO> findAllSalesLogs();
-
         @Select("SELECT id, item_name as itemName, quantity FROM stock WHERE id = #{id}")
         StockDTO findStockById(int id);
 }
