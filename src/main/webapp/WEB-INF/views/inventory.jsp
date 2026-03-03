@@ -222,16 +222,19 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <c:if test="${not empty message}">
+        <span id="successMsg" style="display:none">${message}</span>
+    </c:if>
+    <c:if test="${not empty error}">
+        <span id="errorMsg" style="display:none">${error}</span>
+    </c:if>
 
     <script>
-        <%-- 컨트롤러에서 보낸 성공 메시지가 있으면 alert로 띄움 --%>
-        <c:if test="${not empty message}">
-            alert("${message}");
-        </c:if>
-        <%-- 에러 메시지가 있으면 alert로 띄움 --%>
-        <c:if test="${not empty error}">
-            alert("${error}");
-        </c:if>
+        var successEl = document.getElementById("successMsg");
+        if (successEl) alert(successEl.textContent);
+
+        var errorEl = document.getElementById("errorMsg");
+        if (errorEl) alert(errorEl.textContent);
     </script>
 
 </body>
