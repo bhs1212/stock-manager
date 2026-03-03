@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SalesService {
@@ -33,7 +35,9 @@ public class SalesService {
             throw new RecipeNotFoundException(menuName);
         }
 
-        // 차감 전 재고 충분한지 먼저 확인
+        // 검증하면서 차감량을 미리 계산해두기
+        Map<Integer, Integer> deductionMap = new HashMap<>();
+
         for (RecipeDTO recipe : recipes) {
             int totalUsed = recipe.getRequiredQuantity() * sellCount;
             StockDTO stock = stockMapper.findStockById(recipe.getStockId());
@@ -41,12 +45,12 @@ public class SalesService {
             if (stock == null || stock.getQuantity() < totalUsed) {
                 throw new InsufficientStockException(stock != null ? stock.getItemName() : "알 수 없는 재료");
             }
+            deductionMap.put(recipe.getStockId(), totalUsed);
         }
 
-        // 검증 통과 후 차감
-        for (RecipeDTO recipe : recipes) {
-            int totalUsed = recipe.getRequiredQuantity() * sellCount;
-            stockMapper.decreaseStock(recipe.getStockId(), totalUsed);
+        // 검증 통과 후 차감 (추가 DB 조회 없음)
+        for (Map.Entry<Integer, Integer> entry : deductionMap.entrySet()) {
+            stockMapper.decreaseStock(entry.getKey(), entry.getValue());
         }
 
         salesMapper.insertSalesLog(menuName, sellCount);
