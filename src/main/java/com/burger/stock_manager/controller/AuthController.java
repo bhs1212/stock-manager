@@ -1,6 +1,7 @@
 package com.burger.stock_manager.controller;
 
 import com.burger.stock_manager.model.UserDTO;
+import com.burger.stock_manager.model.UserSessionDTO;
 import com.burger.stock_manager.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class AuthController {
     @PostMapping("/login")
     public String login(String username, String password, HttpSession session, Model model) {
 
-        UserDTO user = userService.authenticate(username, password);
+        UserSessionDTO user = userService.authenticate(username, password);
 
         if (user != null) {
             session.setAttribute("user", user); // 인증 성공 시 세션 발급

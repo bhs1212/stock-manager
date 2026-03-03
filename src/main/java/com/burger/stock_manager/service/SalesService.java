@@ -21,6 +21,9 @@ public class SalesService {
     @Autowired
     private StockMapper stockMapper;
 
+    @Autowired
+    private SalesMapper salesMapper;
+
     @Transactional
     public void processSale(String menuName, int sellCount) {
 
@@ -54,9 +57,6 @@ public class SalesService {
 
         return salesMapper.findAllSalesLogs();
     }
-
-    @Autowired
-    private SalesMapper salesMapper;
 
     public List<SalesStatDTO> getDailyStats() {
         return salesMapper.getDailyStats();

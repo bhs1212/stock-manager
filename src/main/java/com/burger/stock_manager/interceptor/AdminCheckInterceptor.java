@@ -1,6 +1,8 @@
 package com.burger.stock_manager.interceptor;
 
 import com.burger.stock_manager.model.UserDTO;
+import com.burger.stock_manager.model.UserSessionDTO;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -16,7 +18,7 @@ public class AdminCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
+        UserSessionDTO user = (UserSessionDTO) session.getAttribute("user");
 
         if (user == null || !"admin".equals(user.getRole())) {
             response.setContentType("text/html; charset=UTF-8");
