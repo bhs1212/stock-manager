@@ -101,15 +101,12 @@
                         </thead>
                         <tbody>
                             <c:forEach var="item" items="${stocks}">
-                                <tr class="${item.quantity < 10 ? 'low-stock' : ''}">
-                                    <%-- DTO에서 계산한 남은 일수를 변수에 담기 --%>
                                     <c:set var="days" value="${item.getDaysUntilExpiration()}" />
-    
-                                    <%-- 조건에 따라 tr의 클래스(색상)를 결정 --%>
-                                    <tr class="${days < 0 ? 'expire-danger' : (days <= 3 ? 'expire-warning' : '')}">
+
+                                    <tr class="${item.quantity < 10 ? 'low-stock' : ''} ${days < 0 ? 'expire-danger' : (days <= 3 ? 'expire-warning' : '')}">
                                         <td>
                                             <strong>${item.itemName}</strong>
-                                            <%-- 3. 이름 옆에 배지(Badge) 달아주기 --%>
+                                            <%-- 이름 옆에 배지(Badge) 달아주기 --%>
                                             <c:choose>
                                                 <c:when test="${days < 0}">
                                                     <span class="badge bg-danger">폐기대상</span>
@@ -120,7 +117,7 @@
                                             </c:choose>
                                         </td>
                                     <td>
-                                        <%-- 권한 체크: 세션의 유저 role이 'admin'인 경우만 수정 폼 출력 --%>
+                                        <%-- 권한 체크: 세션의 유저 role이 admin인 경우만 수정 폼 출력 --%>
                                         <c:choose>
                                             <c:when test="${sessionScope.user.role == 'admin'}">
                                                 <form action="/update-stock" method="post" class="d-flex align-items-center" 
