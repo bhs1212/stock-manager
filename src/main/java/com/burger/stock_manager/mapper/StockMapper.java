@@ -2,7 +2,6 @@ package com.burger.stock_manager.mapper;
 
 import com.burger.stock_manager.model.StockDTO;
 import com.burger.stock_manager.model.RecipeDTO;
-import com.burger.stock_manager.model.SalesLogDTO;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -49,10 +48,6 @@ public interface StockMapper {
 
         @Update("UPDATE stock SET quantity = #{quantity} WHERE id = #{id}")
         void updateQuantity(@Param("id") int id, @Param("quantity") int quantity);
-
-        @Select("SELECT stock_id as stockId, required_quantity as requiredQuantity " +
-                        "FROM recipe WHERE menu_name = #{menuName}")
-        List<RecipeDTO> getRecipeByMenu(String menuName);
 
         @Update("UPDATE stock SET quantity = quantity - #{usedAmount} WHERE id = #{stockId}")
         void decreaseStock(@Param("stockId") int stockId, @Param("usedAmount") int usedAmount);

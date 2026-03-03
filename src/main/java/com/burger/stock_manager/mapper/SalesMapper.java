@@ -1,5 +1,6 @@
 package com.burger.stock_manager.mapper;
 
+import com.burger.stock_manager.model.RecipeDTO;
 import com.burger.stock_manager.model.SalesLogDTO;
 import com.burger.stock_manager.model.SalesStatDTO;
 
@@ -46,4 +47,8 @@ public interface SalesMapper {
         @Select("SELECT id, menu_name as menuName, sell_count as sellCount, sale_date as saleDate " +
                         "FROM sales_log ORDER BY sale_date DESC LIMIT 50")
         List<SalesLogDTO> findAllSalesLogs();
+
+        @Select("SELECT stock_id as stockId, required_quantity as requiredQuantity " +
+                        "FROM recipe WHERE menu_name = #{menuName}")
+        List<RecipeDTO> getRecipeByMenu(String menuName);
 }

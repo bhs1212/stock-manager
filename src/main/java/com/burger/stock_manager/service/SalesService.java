@@ -24,7 +24,7 @@ public class SalesService {
     @Transactional
     public void processSale(String menuName, int sellCount) {
 
-        List<RecipeDTO> recipes = stockMapper.getRecipeByMenu(menuName);
+        List<RecipeDTO> recipes = salesMapper.getRecipeByMenu(menuName);
 
         if (recipes == null || recipes.isEmpty()) {
             throw new RecipeNotFoundException(menuName);
