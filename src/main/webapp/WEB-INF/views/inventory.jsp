@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,22 +9,14 @@
     <title>버거킹 재고관리</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f1ea; } /* 버거킹 배경색 느낌 */
-        .navbar { background-color: #da291c; } /* 버거킹 레드 */
-        .btn-king { background-color: #ffbc0d; color: #502314; font-weight: bold; } /* 버거킹 옐로우 */
+        body { background-color: #f4f1ea; }
+        .navbar { background-color: #da291c; }
+        .btn-king { background-color: #ffbc0d; color: #502314; font-weight: bold; }
         .btn-king:hover { background-color: #e6a900; }
-        .low-stock { color: #da291c; font-weight: bold; background-color: #ffeaea; } /* 재고 부족 강조 */
-    </style>
-    <style>
-        /* 수량이 0일 때 글자색을 빨간색으로 만들고 굵게 표시 */
-        .out-of-stock {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
-    <style>
-        .expire-danger { background-color: #f8d7da !important; } /* 연한 빨강 (만료) */
-        .expire-warning { background-color: #fff3cd !important; } /* 연한 노랑 (임박) */
+        .low-stock { color: #da291c; font-weight: bold; background-color: #ffeaea; }
+        .out-of-stock { color: red; font-weight: bold; }
+        .expire-danger { background-color: #f8d7da !important; }
+        .expire-warning { background-color: #fff3cd !important; }
     </style>
 </head>
 <body>
@@ -33,12 +26,12 @@
                 <a class="navbar-brand" href="/inventory">🍔 BURGER KING Stock Manager</a>
         
                 <div class="navbar-nav ms-auto align-items-center">
-                    <c:if test="${not empty sessionScope.user}">
+                    <sec:authorize access="isAuthenticated()">
                         <span class="navbar-text me-3 text-white">
-                            <strong>${sessionScope.user.name}</strong> 님 접속 중
+                            <strong><sec:authentication property="principal.username"/></strong> 님 접속 중
                         </span>
                         <a class="btn btn-outline-light btn-sm" href="/logout">로그아웃</a>
-                    </c:if>
+                    </sec:authorize>
                 </div>
             </div>
         </nav>
@@ -106,7 +99,6 @@
                                     <tr class="${item.quantity < 10 ? 'low-stock' : ''} ${days < 0 ? 'expire-danger' : (days <= 3 ? 'expire-warning' : '')}">
                                         <td>
                                             <strong>${item.itemName}</strong>
-                                            <%-- 이름 옆에 배지(Badge) 달아주기 --%>
                                             <c:choose>
                                                 <c:when test="${days < 0}">
                                                     <span class="badge bg-danger">폐기대상</span>
@@ -117,9 +109,7 @@
                                             </c:choose>
                                         </td>
                                     <td>
-                                        <%-- 권한 체크: 세션의 유저 role이 admin인 경우만 수정 폼 출력 --%>
-                                        <c:choose>
-                                            <c:when test="${sessionScope.user.role == 'admin'}">
+                                        <sec:authorize access="hasRole('ADMIN')">
                                                 <form action="/update-stock" method="post" class="d-flex align-items-center" 
                                                     onsubmit="return confirm('수량을 변경하시겠습니까?');">
                                                     <input type="hidden" name="id" value="${item.id}">
@@ -130,28 +120,25 @@
                             
                                                     <button type="submit" class="btn btn-sm btn-outline-secondary">변경</button>
                                                 </form>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <%-- 일반 사용자에게는 수량만 텍스트로 표시 --%>
+                                        </sec:authorize>
+                                        <sec:authorize access="!hasRole('ADMIN')">
                                                 <span class="${item.quantity == 0 ? 'text-danger fw-bold' : ''}">${item.quantity}</span>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        </sec:authorize>
                                     </td>
                                     <td>${item.quantity} ${item.unit}</td>
                                     <td>
                                         ${item.expirationDate}
                                     </td>
                                     <td>
-                                        <%-- 권한 체크: 관리자일 때만 삭제 버튼 노출 --%>
-                                        <c:if test="${sessionScope.user.role == 'admin'}">
+                                        <sec:authorize access="hasRole('ADMIN')">
                                             <form action="/delete-stock" method="post" style="display:inline;">
                                                 <input type="hidden" name="id" value="${item.id}">
                                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
                                             </form>
-                                        </c:if>
-                                        <c:if test="${sessionScope.user.role != 'admin'}">
+                                        </sec:authorize>
+                                        <sec:authorize access="!hasRole('ADMIN')">
                                             <span class="text-muted small">조회 전용</span>
-                                        </c:if>
+                                        </sec:authorize>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -160,19 +147,16 @@
                     <div class="d-flex justify-content-center mt-4">
                         <nav>
                             <ul class="pagination">
-                                <%-- 이전 버튼 --%>
                                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                                     <a class="page-link" href="?page=${currentPage - 1}&keyword=${keyword}">이전</a>
                                 </li>
 
-                                <%-- 페이지 번호 --%>
                                 <c:forEach var="i" begin="1" end="${totalPages}">
                                     <li class="page-item ${currentPage == i ? 'active' : ''}">
                                         <a class="page-link" href="?page=${i}&keyword=${keyword}">${i}</a>
                                     </li>
                                 </c:forEach>
 
-                                <%-- 다음 버튼 --%>
                                 <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
                                     <a class="page-link" href="?page=${currentPage + 1}&keyword=${keyword}">다음</a>
                                 </li>
