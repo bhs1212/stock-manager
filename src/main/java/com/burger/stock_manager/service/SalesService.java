@@ -9,7 +9,6 @@ import com.burger.stock_manager.model.SalesLogDTO;
 import com.burger.stock_manager.model.SalesStatDTO;
 import com.burger.stock_manager.model.StockDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +19,13 @@ import java.util.Map;
 @Service
 public class SalesService {
 
-    @Autowired
-    private StockMapper stockMapper;
+    private final StockMapper stockMapper;
+    private final SalesMapper salesMapper;
 
-    @Autowired
-    private SalesMapper salesMapper;
+    public SalesService(StockMapper stockMapper, SalesMapper salesMapper) {
+        this.stockMapper = stockMapper;
+        this.salesMapper = salesMapper;
+    }
 
     @Transactional
     public void processSale(String menuName, int sellCount) {

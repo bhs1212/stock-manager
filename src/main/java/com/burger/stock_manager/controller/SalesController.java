@@ -1,7 +1,6 @@
 package com.burger.stock_manager.controller;
 
-import com.burger.stock_manager.service.SalesService; // 서비스 임포트
-import org.springframework.beans.factory.annotation.Autowired;
+import com.burger.stock_manager.service.SalesService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +13,11 @@ import java.time.LocalDate;
 @Controller
 public class SalesController {
 
-    @Autowired
-    private SalesService salesService;
+    private final SalesService salesService;
+
+    public SalesController(SalesService salesService) {
+        this.salesService = salesService;
+    }
 
     @PostMapping("/sell-menu")
     public String sellMenu(@RequestParam String menuName,

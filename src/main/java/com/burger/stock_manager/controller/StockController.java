@@ -2,17 +2,12 @@ package com.burger.stock_manager.controller;
 
 import com.burger.stock_manager.model.StockDTO;
 import com.burger.stock_manager.service.StockService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -20,8 +15,11 @@ import java.util.List;
 @Validated
 public class StockController {
 
-    @Autowired
-    private StockService stockService;
+    private final StockService stockService;
+
+    public StockController(StockService stockService) {
+        this.stockService = stockService;
+    }
 
     // 새로운 재고 목록 페이지
     @GetMapping("/inventory")

@@ -2,7 +2,6 @@ package com.burger.stock_manager.service;
 
 import com.burger.stock_manager.mapper.StockMapper;
 import com.burger.stock_manager.model.StockDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +12,11 @@ import java.util.List;
 @Service
 public class StockService {
 
-    @Autowired
-    private StockMapper stockMapper;
+    private final StockMapper stockMapper;
+
+    public StockService(StockMapper stockMapper) {
+        this.stockMapper = stockMapper;
+    }
 
     // 재고 목록 데이터 가져오기, 유통기한 계산하기
     public List<StockDTO> getStocks(String keyword, int offset, int size) {

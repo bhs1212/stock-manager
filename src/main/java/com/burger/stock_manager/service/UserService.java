@@ -3,7 +3,6 @@ package com.burger.stock_manager.service;
 import com.burger.stock_manager.mapper.UserMapper;
 import com.burger.stock_manager.model.UserDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+    private final BCryptPasswordEncoder encoder;
 
-    @Autowired
-    private BCryptPasswordEncoder encoder;
+    public UserService(UserMapper userMapper, BCryptPasswordEncoder encoder) {
+        this.userMapper = userMapper;
+        this.encoder = encoder;
+    }
 
     // 아이디 중복 체크 로직
     public boolean isUsernameTaken(String username) {

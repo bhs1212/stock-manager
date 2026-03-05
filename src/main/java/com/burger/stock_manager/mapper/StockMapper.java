@@ -1,7 +1,6 @@
 package com.burger.stock_manager.mapper;
 
 import com.burger.stock_manager.model.StockDTO;
-import com.burger.stock_manager.model.RecipeDTO;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
