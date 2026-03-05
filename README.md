@@ -198,3 +198,22 @@ spring.datasource.password=your_password
 - 삭제된 자재 재등록 시 복원 검증
 - 신규 자재 정상 등록 검증
 - 전체 페이지 수 계산 검증
+
+## 📡 REST API
+
+| Method | URL                             | 설명           | 권한   |
+| ------ | ------------------------------- | -------------- | ------ |
+| GET    | /api/stocks?page=1&keyword=     | 재고 목록 조회 | 로그인 |
+| POST   | /api/stocks                     | 자재 등록      | ADMIN  |
+| PUT    | /api/stocks/{id}                | 수량 변경      | ADMIN  |
+| DELETE | /api/stocks/{id}                | 자재 삭제      | ADMIN  |
+| POST   | /api/sales/sell                 | 메뉴 판매 처리 | 로그인 |
+| GET    | /api/sales/logs                 | 판매 내역 조회 | 로그인 |
+| GET    | /api/sales/stats/daily          | 일별 통계      | 로그인 |
+| GET    | /api/sales/stats/weekly         | 주별 통계      | 로그인 |
+| GET    | /api/sales/stats/monthly        | 월별 통계      | 로그인 |
+| GET    | /api/sales/stats/{year}/{month} | 월별 조회      | 로그인 |
+| GET    | /api/sales/menus                | 메뉴 목록      | 로그인 |
+| GET    | /api/sales/recipes              | 레시피 목록    | 로그인 |
+| POST   | /api/sales/recipes              | 레시피 등록    | ADMIN  |
+| DELETE | /api/sales/recipes/{id}         | 레시피 삭제    | ADMIN  |
