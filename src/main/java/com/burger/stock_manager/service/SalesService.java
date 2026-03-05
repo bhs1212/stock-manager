@@ -78,4 +78,20 @@ public class SalesService {
     public List<SalesStatDTO> getStatsByMonth(int year, int month) {
         return salesMapper.getStatsByMonth(year, month);
     }
+
+    public List<RecipeDTO> getAllRecipes() {
+        return salesMapper.findAllRecipes();
+    }
+
+    public void addRecipe(RecipeDTO recipe) {
+        salesMapper.insertRecipe(recipe);
+    }
+
+    public void deleteRecipe(int id) {
+        salesMapper.deleteRecipe(id);
+    }
+
+    public List<SalesStatDTO> getMenuList() {
+        return salesMapper.getMenuList();
+    }
 }

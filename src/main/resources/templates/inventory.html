@@ -76,6 +76,7 @@
           🍔 메뉴 판매 처리
         </button>
         <a href="/sales-dashboard" class="btn btn-king"> 📊 판매 내역 보기 </a>
+        <a href="/recipe" class="btn btn-king"> 🍳 레시피 관리 </a>
       </div>
 
       <div sec:authorize="hasRole('ADMIN')" class="card shadow-sm mb-4">
@@ -300,9 +301,11 @@
                   <option value="" disabled selected>
                     판매할 메뉴를 선택하세요
                   </option>
-                  <option value="불고기버거">불고기버거</option>
-                  <option value="치즈버거">치즈버거</option>
-                  <option value="와퍼">와퍼</option>
+                  <option
+                    th:each="menu : ${menuList}"
+                    th:value="${menu.menuName}"
+                    th:text="${menu.menuName}"
+                  ></option>
                 </select>
               </div>
               <div class="mb-3">

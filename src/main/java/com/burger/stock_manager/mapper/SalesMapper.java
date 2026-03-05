@@ -4,6 +4,7 @@ import com.burger.stock_manager.model.RecipeDTO;
 import com.burger.stock_manager.model.SalesLogDTO;
 import com.burger.stock_manager.model.SalesStatDTO;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -51,4 +52,19 @@ public interface SalesMapper {
         @Select("SELECT stock_id as stockId, required_quantity as requiredQuantity " +
                         "FROM recipe WHERE menu_name = #{menuName}")
         List<RecipeDTO> getRecipeByMenu(String menuName);
+
+        @Select("SELECT r.id, r.menu_name as menuName, r.stock_id as stockId, r.required_quantity as requiredQuantity, s.item_name as itemName "
+                        +
+                        "FROM recipe r JOIN stock s ON r.stock_id = s.id " +
+                        "ORDER BY r.menu_name, s.item_name")
+        List<RecipeDTO> findAllRecipes();
+
+        @Insert("INSERT INTO recipe (menu_name, stock_id, required_quantity) VALUES (#{menuName}, #{stockId}, #{requiredQuantity})")
+        void insertRecipe(RecipeDTO recipe);
+
+        @Delete("DELETE FROM recipe WHERE id = #{id}")
+        void deleteRecipe(int id);
+
+        @Select("SELECT DISTINCT menu_name as menuName FROM recipe ORDER BY menu_name")
+        List<SalesStatDTO> getMenuList();
 }

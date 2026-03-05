@@ -23,7 +23,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/add-stock", "/delete-stock", "/update-stock").hasRole("ADMIN")
+                        .requestMatchers("/add-stock", "/delete-stock", "/update-stock", "/add-recipe",
+                                "/delete-recipe")
+                        .hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginPage("/login")

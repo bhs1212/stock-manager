@@ -1,0 +1,163 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>버거킹 레시피 관리</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f4f1ea;
+      }
+      .navbar {
+        background-color: #da291c;
+      }
+      .btn-king {
+        background-color: #ffbc0d;
+        color: #502314;
+        font-weight: bold;
+      }
+      .btn-king:hover {
+        background-color: #e6a900;
+      }
+      .card-header {
+        background-color: #502314;
+        color: white;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="/inventory"
+          >🍔 BURGER KING Recipe Manager</a
+        >
+        <div class="navbar-nav ms-auto">
+          <a class="btn btn-outline-light btn-sm" href="/inventory"
+            >재고 목록으로 돌아가기</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div sec:authorize="hasRole('ADMIN')" class="card shadow-sm mb-4">
+        <div class="card-header">🍳 레시피 등록</div>
+        <div class="card-body">
+          <form th:action="@{/add-recipe}" method="post" class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label fw-bold">메뉴명</label>
+              <input
+                type="text"
+                name="menuName"
+                class="form-control"
+                placeholder="예: 와퍼"
+                required
+              />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">자재 선택</label>
+              <select name="stockId" class="form-select" required>
+                <option value="" disabled selected>자재를 선택하세요</option>
+                <option
+                  th:each="stock : ${stocks}"
+                  th:value="${stock.id}"
+                  th:text="${stock.itemName}"
+                ></option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-bold">필요 수량</label>
+              <input
+                type="number"
+                name="requiredQuantity"
+                class="form-control"
+                min="1"
+                value="1"
+                required
+              />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button type="submit" class="btn btn-king w-100">등록</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <span>📋 등록된 레시피 목록</span>
+          <span
+            class="badge bg-light text-dark"
+            th:text="'총 ' + ${#lists.size(recipes)} + '건'"
+          ></span>
+        </div>
+        <div class="card-body">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>메뉴명</th>
+                <th>자재명</th>
+                <th>필요 수량</th>
+                <th sec:authorize="hasRole('ADMIN')">관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="recipe : ${recipes}">
+                <td><strong th:text="${recipe.menuName}"></strong></td>
+                <td th:text="${recipe.itemName}"></td>
+                <td>
+                  <span
+                    class="badge bg-primary"
+                    th:text="${recipe.requiredQuantity}"
+                  ></span>
+                </td>
+                <td sec:authorize="hasRole('ADMIN')">
+                  <form
+                    th:action="@{/delete-recipe}"
+                    method="post"
+                    style="display: inline"
+                  >
+                    <input type="hidden" name="id" th:value="${recipe.id}" />
+                    <button
+                      type="submit"
+                      class="btn btn-danger btn-sm"
+                      onclick="return confirm('정말 삭제하시겠습니까?');"
+                    >
+                      삭제
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(recipes)}">
+                <td colspan="4" class="text-center py-5 text-muted">
+                  등록된 레시피가 없습니다. 🍳 레시피를 먼저 등록해 보세요!
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <span
+      id="successMsg"
+      style="display: none"
+      th:if="${message}"
+      th:text="${message}"
+    ></span>
+    <script>
+      var successEl = document.getElementById("successMsg");
+      if (successEl) alert(successEl.textContent);
+    </script>
+  </body>
+</html>

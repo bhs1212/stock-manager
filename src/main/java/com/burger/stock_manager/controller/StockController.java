@@ -1,6 +1,7 @@
 package com.burger.stock_manager.controller;
 
 import com.burger.stock_manager.model.StockDTO;
+import com.burger.stock_manager.service.SalesService;
 import com.burger.stock_manager.service.StockService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,9 +17,11 @@ import java.util.List;
 public class StockController {
 
     private final StockService stockService;
+    private final SalesService salesService;
 
-    public StockController(StockService stockService) {
+    public StockController(StockService stockService, SalesService salesService) {
         this.stockService = stockService;
+        this.salesService = salesService;
     }
 
     // 새로운 재고 목록 페이지
@@ -38,6 +41,7 @@ public class StockController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
+        model.addAttribute("menuList", salesService.getMenuList());
 
         return "inventory";
     }
