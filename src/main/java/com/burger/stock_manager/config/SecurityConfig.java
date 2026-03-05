@@ -26,6 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/add-stock", "/delete-stock", "/update-stock", "/add-recipe",
                                 "/delete-recipe")
                         .hasRole("ADMIN")
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginPage("/login")
