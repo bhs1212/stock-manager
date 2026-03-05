@@ -13,7 +13,7 @@
 | Backend  | Java 17, Spring Boot 3.5, Spring Security |
 | DB       | MySQL 8.0, MyBatis                        |
 | Frontend | Thymeleaf, Bootstrap 5                    |
-| Build    | Maven                                     |
+| Build    | Maven (JAR)                               |
 | etc      | Lombok, BCrypt                            |
 
 ## 📁 프로젝트 구조
@@ -82,7 +82,7 @@ src/main/java/com/burger/stock_manager/
 
 ### 인증/권한
 
-- Spring Security 기반 로그인/로그아웃
+- Spring Security 기반 로그인/로그아웃 (CSRF 보호 적용)
 - BCrypt 비밀번호 암호화
 - ADMIN/USER 역할 분리 (ADMIN만 재고 등록/수정/삭제 가능)
 
@@ -180,9 +180,21 @@ spring.datasource.password=your_password
 ./mvnw test
 ```
 
-### 테스트 항목 (SalesServiceTest)
+### 테스트 항목
+
+**SalesServiceTest (4건)**
 
 - 정상 판매 시 재고 차감 및 판매 로그 저장 검증
 - 레시피 미등록 메뉴 판매 시 RecipeNotFoundException 발생
 - 재고 부족 시 InsufficientStockException 발생 및 차감 미실행
 - 복수 재료 메뉴의 차감량 계산 정확성 검증
+
+**StockServiceTest (7건)**
+
+- 유통기한 남은 일수 계산 검증
+- 유통기한 만료 재고 음수 계산 검증
+- 자재명 빈값 등록 시 예외 발생 검증
+- 수량 음수 등록 시 예외 발생 검증
+- 삭제된 자재 재등록 시 복원 검증
+- 신규 자재 정상 등록 검증
+- 전체 페이지 수 계산 검증
