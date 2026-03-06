@@ -67,4 +67,11 @@ public interface SalesMapper {
 
         @Select("SELECT DISTINCT menu_name as menuName FROM recipe ORDER BY menu_name")
         List<SalesStatDTO> getMenuList();
+
+        @Select("SELECT id, menu_name as menuName, sell_count as sellCount, sale_date as saleDate " +
+                        "FROM sales_log ORDER BY sale_date DESC LIMIT #{offset}, #{size}")
+        List<SalesLogDTO> findSalesLogsWithPaging(@Param("offset") int offset, @Param("size") int size);
+
+        @Select("SELECT COUNT(*) FROM sales_log")
+        int countSalesLogs();
 }

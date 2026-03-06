@@ -94,4 +94,13 @@ public class SalesService {
     public List<SalesStatDTO> getMenuList() {
         return salesMapper.getMenuList();
     }
+
+    public List<SalesLogDTO> getSalesLogs(int offset, int size) {
+        return salesMapper.findSalesLogsWithPaging(offset, size);
+    }
+
+    public int getSalesLogTotalPages(int size) {
+        int totalCount = salesMapper.countSalesLogs();
+        return (int) Math.ceil((double) totalCount / size);
+    }
 }

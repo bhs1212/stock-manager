@@ -41,16 +41,21 @@ public class SalesController {
     public String salesDashboard(
             @RequestParam(value = "year", required = false) Integer year,
             @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             Model model) {
 
-        // 기본값: 현재 연월
         LocalDate now = LocalDate.now();
         if (year == null)
             year = now.getYear();
         if (month == null)
             month = now.getMonthValue();
 
-        model.addAttribute("salesLogs", salesService.getSalesLogs());
+        int size = 10;
+        int offset = (page - 1) * size;
+
+        model.addAttribute("salesLogs", salesService.getSalesLogs(offset, size));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", salesService.getSalesLogTotalPages(size));
         model.addAttribute("dailyStats", salesService.getDailyStats());
         model.addAttribute("weeklyStats", salesService.getWeeklyStats());
         model.addAttribute("monthlyStats", salesService.getMonthlyStats());
