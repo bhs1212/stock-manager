@@ -55,12 +55,16 @@
           >
             <strong sec:authentication="principal.username"></strong> 님 접속 중
           </span>
-          <a
+          <form
             sec:authorize="isAuthenticated()"
-            class="btn btn-outline-light btn-sm"
-            href="/logout"
-            >로그아웃</a
+            th:action="@{/logout}"
+            method="post"
+            style="display: inline"
           >
+            <button type="submit" class="btn btn-outline-light btn-sm">
+              로그아웃
+            </button>
+          </form>
         </div>
       </div>
     </nav>
