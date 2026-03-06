@@ -112,17 +112,25 @@ src/main/java/com/burger/stock_manager/
 
 ![로그인](images/login.png)
 
-### 재고 목록
+### 재고 목록 (관리자)
 
-![재고목록](images/inventory.png)
+![관리자 재고목록](images/inventory_admin.png)
+
+### 재고 목록 (일반 사용자)
+
+![일반 재고목록](images/inventory_user.png)
+
+### 메뉴 판매 처리
+
+![메뉴 판매](images/sell_menu.png)
 
 ### 판매 대시보드
 
-![대시보드](images/dashboard.png)
+![판매 대시보드](images/sales_dashboard.png)
 
 ### 레시피 관리
 
-![레시피](images/recipe.png)
+![레시피 관리](images/recipe.png)
 
 ## 🚀 실행 방법
 
