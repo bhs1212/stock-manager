@@ -106,6 +106,24 @@ src/main/java/com/burger/stock_manager/
 - 연월 선택 커스텀 조회
 - 최근 판매 내역 목록
 
+## 📸 화면 미리보기
+
+### 로그인
+
+![로그인](images/login.png)
+
+### 재고 목록
+
+![재고목록](images/inventory.png)
+
+### 판매 대시보드
+
+![대시보드](images/dashboard.png)
+
+### 레시피 관리
+
+![레시피](images/recipe.png)
+
 ## 🚀 실행 방법
 
 ### 1. 사전 요구사항
